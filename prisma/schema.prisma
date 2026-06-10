@@ -1,0 +1,483 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ──
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  INVITED
+}
+
+enum TenantStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  TRIAL
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INACTIVE
+  INVITED
+}
+
+enum ProjectStatus {
+  DRAFT
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  DELAYED
+  COMPLETED
+  CLOSED
+  CANCELLED
+}
+
+enum ProjectHealth {
+  GREEN
+  YELLOW
+  RED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  ERROR
+}
+
+enum ActivityEvent {
+  LOGIN
+  LOGOUT
+  COMPANY_CREATED
+  COMPANY_UPDATED
+  USER_INVITED
+  USER_ROLE_CHANGED
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  PROJECT_STATUS_CHANGED
+  SETTINGS_UPDATED
+}
+
+// ── NextAuth Models ──
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Authenticator {
+  id                   String  @id @default(cuid())
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ── Core Business Models ──
+
+model User {
+  id                String      @id @default(cuid())
+  email             String      @unique
+  emailVerified     DateTime?
+  passwordHash      String?
+  nameAr            String?
+  nameEn            String?
+  phone             String?
+  image             String?
+  status            UserStatus  @default(ACTIVE)
+  isPlatformAdmin   Boolean     @default(false)
+  emailNotifications Boolean   @default(true)
+  locale            String      @default("ar")
+  lastLoginAt       DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  deletedAt         DateTime?
+
+  accounts       Account[]
+  sessions       Session[]
+  authenticators Authenticator[]
+  memberships    TenantMembership[]
+  userRoles      UserRole[]
+  activityLogs   ActivityLog[]
+  notifications  Notification[]
+  createdProjects  Project[] @relation("ProjectCreatedBy")
+  updatedProjects  Project[] @relation("ProjectUpdatedBy")
+  managedProjects  Project[] @relation("ProjectManager")
+}
+
+model Tenant {
+  id               String       @id @default(cuid())
+  companyNameAr    String
+  companyNameEn    String?
+  legalName        String?
+  commercialRegister String?
+  taxNumber        String?
+  activityType     String?
+  companySize      String?
+  country          String       @default("SA")
+  city             String?
+  currency         String       @default("SAR")
+  timezone         String       @default("Asia/Riyadh")
+  dateFormat       String       @default("DD/MM/YYYY")
+  weekStartDay     String       @default("Sunday")
+  fiscalYearStart  String       @default("01-01")
+  logo             String?
+  status           TenantStatus @default(TRIAL)
+  maxUsers         Int          @default(5)
+  maxProjects      Int          @default(3)
+  storageLimitMB   Int          @default(500)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  deletedAt        DateTime?
+
+  memberships       TenantMembership[]
+  branches          Branch[]
+  subscriptions     Subscription[]
+  tenantSettings    TenantSetting[]
+  projects          Project[]
+  activityLogs      ActivityLog[]
+  notifications     Notification[]
+  companyProfile    CompanyProfile?
+
+  @@index([status])
+}
+
+model TenantMembership {
+  id        String           @id @default(cuid())
+  tenantId  String
+  userId    String
+  roleId    String
+  status    MembershipStatus @default(ACTIVE)
+  joinedAt  DateTime         @default(now())
+  invitedAt DateTime?
+  invitedBy String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([userId])
+}
+
+model CompanyProfile {
+  id                String    @id @default(cuid())
+  tenantId          String    @unique
+  aboutAr           String?
+  aboutEn           String?
+  website           String?
+  phone             String?
+  address           String?
+  poBox             String?
+  licenseNumber     String?
+  insuranceNumber   String?
+  insuranceExpiry   DateTime?
+  classification    String?
+  classificationGrade String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model Branch {
+  id        String   @id @default(cuid())
+  tenantId  String
+  nameAr    String
+  nameEn    String?
+  phone     String?
+  address   String?
+  city      String?
+  isMain    Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+model SubscriptionPlan {
+  id            String   @id @default(cuid())
+  nameAr        String
+  nameEn        String
+  code          String   @unique
+  descriptionAr String?
+  descriptionEn String?
+  maxUsers      Int
+  maxProjects   Int
+  storageLimitMB Int
+  monthlyPrice  Decimal  @default(0)
+  yearlyPrice   Decimal  @default(0)
+  features      Json     @default("[]")
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id            String   @id @default(cuid())
+  tenantId      String
+  planId        String
+  startDate     DateTime
+  endDate       DateTime?
+  isActive      Boolean  @default(true)
+  autoRenew     Boolean  @default(true)
+  paymentMethod String?
+  paymentRef    String?
+  amount        Decimal  @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  plan   SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@index([tenantId])
+}
+
+model Role {
+  id            String   @id @default(cuid())
+  name          String   @unique
+  nameAr        String
+  nameEn        String
+  descriptionAr String?
+  descriptionEn String?
+  isSystem      Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  permissions RolePermission[]
+  memberships TenantMembership[]
+  userRoles   UserRole[]
+}
+
+model Permission {
+  id            String   @id @default(cuid())
+  key           String   @unique
+  nameAr        String
+  nameEn        String
+  module        String
+  descriptionAr String?
+  descriptionEn String?
+  createdAt     DateTime @default(now())
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  id           String   @id @default(cuid())
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  projectId String?
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role    Role     @relation(fields: [roleId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+
+  @@unique([userId, roleId, projectId])
+  @@index([userId])
+  @@index([projectId])
+}
+
+model Project {
+  id                     String        @id @default(cuid())
+  tenantId               String
+  nameAr                 String
+  nameEn                 String?
+  descriptionAr          String?
+  descriptionEn          String?
+  projectNumber          String?
+  clientName             String?
+  clientContact          String?
+  city                   String?
+  projectType            String?
+  contractValue          Decimal       @default(0)
+  contractValueAfterChanges Decimal?
+  budget                 Decimal       @default(0)
+  actualCost             Decimal       @default(0)
+  commitments            Decimal       @default(0)
+  expectedProfit         Decimal       @default(0)
+  invoicedAmount         Decimal       @default(0)
+  collectedAmount        Decimal       @default(0)
+  progressPercentage     Decimal       @default(0)
+  plannedProgress        Decimal       @default(0)
+  status                 ProjectStatus @default(DRAFT)
+  health                 ProjectHealth @default(GREEN)
+  riskLevel              RiskLevel     @default(LOW)
+  startDate              DateTime?
+  endDate                DateTime?
+  actualEndDate          DateTime?
+  delayDays              Int           @default(0)
+  managerId              String?
+  createdById            String?
+  updatedById            String?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+  deletedAt              DateTime?
+
+  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  manager   User?  @relation("ProjectManager", fields: [managerId], references: [id])
+  createdBy User?  @relation("ProjectCreatedBy", fields: [createdById], references: [id])
+  updatedBy User?  @relation("ProjectUpdatedBy", fields: [updatedById], references: [id])
+
+  milestones  ProjectMilestone[]
+  userRoles   UserRole[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([managerId])
+}
+
+model ActivityLog {
+  id            String        @id @default(cuid())
+  tenantId      String
+  userId        String
+  event         ActivityEvent
+  entity        String
+  entityId      String?
+  descriptionAr String?
+  descriptionEn String?
+  metadata      Json          @default("{}")
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime      @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id            String           @id @default(cuid())
+  tenantId      String
+  userId        String?
+  type          NotificationType @default(INFO)
+  titleAr       String
+  titleEn       String?
+  descriptionAr String?
+  descriptionEn String?
+  link          String?
+  isRead        Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([isRead])
+}
+
+model SystemSetting {
+  id            String   @id @default(cuid())
+  key           String   @unique
+  value         Json
+  descriptionAr String?
+  descriptionEn String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TenantSetting {
+  id        String   @id @default(cuid())
+  tenantId  String
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+}
+
+model ProjectMilestone {
+  id            String   @id @default(cuid())
+  projectId     String
+  nameAr        String
+  nameEn        String?
+  dueDate       DateTime?
+  completedDate DateTime?
+  progress      Decimal  @default(0)
+  status        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
