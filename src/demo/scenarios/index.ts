@@ -1,5 +1,5 @@
-import { DEMO_PROJECTS, DEMO_MILESTONES, DEMO_TASKS, DEMO_RISKS, DEMO_DAILY_REPORTS } from "@/demo/data";
-import { getDemoProject, updateDemoProject, createDemoProject, createDemoTask, createDemoRisk, createDemoReport, resetDemoProjects, resetDemoTasks, resetDemoRisks, resetDemoDailyReports } from "@/demo/repositories";
+import { DEMO_PROJECTS, DEMO_MILESTONES } from "@/demo/data";
+import { createDemoTask, createDemoRisk, resetDemoProjects, resetDemoTasks, resetDemoRisks, resetDemoDailyReports } from "@/demo/repositories";
 
 export function simulateProgressUpdate(projectId: string, newProgress: number): void {
   const project = DEMO_PROJECTS.find((p) => p.id === projectId);

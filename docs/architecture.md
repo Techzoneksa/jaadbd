@@ -2,6 +2,45 @@
 
 ## نظرة عامة
 
+JAAD BUILD يتبع استراتيجية **Demo-First** حيث يتم تطوير جميع الوحدات أولاً بنمط Demo (بيانات تجريبية مدمجة، مستودعات في الذاكرة، بدون قاعدة بيانات خارجية) قبل ربطها بـ PostgreSQL في الإنتاج.
+
+### Demo-First Architecture
+
+```
+┌───────────────────────────────────────────────────┐
+│                   Pages / Components               │
+│             (تستخدم Services فقط)                   │
+├───────────────────────────────────────────────────┤
+│                    Service Layer                   │
+│   (نفس الواجهة لكل من Demo و Production)            │
+├───────────────────────────────────────────────────┤
+│                                                    │
+│   ┌─────────────────────┐  ┌─────────────────────┐ │
+│   │  Demo Repositories  │  │  Prisma Repositories │ │
+│   │  (في الذاكرة)        │  │  (PostgreSQL)        │ │
+│   │  src/demo/repos/    │  │  src/repos/ (Future) │ │
+│   └─────────────────────┘  └─────────────────────┘ │
+│                                                    │
+│   ┌─────────────────────┐                          │
+│   │  Demo Data Layer    │                          │
+│   │  (src/demo/data/)   │                          │
+│   │  - 8 مشاريع         │                          │
+│   │  - 50 مهمة          │                          │
+│   │  - 40 Milestone     │                          │
+│   │  - 15 تقرير يومي    │                          │
+│   │  - 31 مخاطرة        │                          │
+│   └─────────────────────┘                          │
+├───────────────────────────────────────────────────┤
+│                    Library Layer                   │
+├───────────────────────────────────────────────────┤
+│                    Database Layer                  │
+│  ┌───────────────────────────────────────────┐     │
+│  │  PostgreSQL 15+ (Production only)         │     │
+│  │  Demo Mode لا يحتاج PostgreSQL            │     │
+│  └───────────────────────────────────────────┘     │
+└───────────────────────────────────────────────────┘
+```
+
 JAAD BUILD هو تطبيق ويب من صفحة واحدة (SPA) مع واجهات API مبنية على Next.js 15 (App Router). يستخدم التطبيق نموذج **معمارية طبقات** تفصل بين العرض ومنطق الأعمال والبيانات.
 
 ```
@@ -358,6 +397,31 @@ Dashboard → Projects → Create Project → Prisma → PostgreSQL
               │                           │
               └── Zod Validation ←─────┘
 ```
+
+## Demo Security vs Production Security
+
+### Demo Mode
+
+```typescript
+// DemoIdentityServiceImpl — صلاحيات تجريبية في الذاكرة
+hasPermission(permission: string): boolean {
+  const rolePermissions = demoConfig.permissionsByRole[this.currentRole];
+  return rolePermissions?.includes(permission) ?? false;
+}
+```
+
+- الأدوار والصلاحيات محددة في `src/config/demo.ts`
+- مبدّل الأدوار التجريبي يخزّن الدور في `localStorage`
+- **لا يوفر أمانًا حقيقيًا** — فقط لمحاكاة تدفق العمل
+- لا يظهر مبدّل الأدوار خارج Demo Mode
+
+### Production Security
+
+في الإنتاج (عند ربط PostgreSQL):
+- صلاحيات Prisma حقيقية مع جداول `Role` و `Permission`
+- `requirePermission()` قبل كل عملية
+- `tenantId` في كل استعلام لعزل البيانات
+- JWT للمصادقة الحقيقية
 
 ## الأمان
 

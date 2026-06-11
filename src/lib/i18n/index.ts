@@ -1,20 +1,20 @@
-import { config } from "@/config";
-
 type Messages = Record<string, string>;
 
 let arMessages: Messages = {};
 let enMessages: Messages = {};
 
 function flattenMessages(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   obj: Record<string, any>,
   prefix = "",
 ): Messages {
   return Object.keys(obj).reduce((acc: Messages, key: string) => {
     const prefixedKey = prefix ? `${prefix}.${key}` : key;
-    if (typeof obj[key] === "object" && obj[key] !== null && !Array.isArray(obj[key])) {
-      Object.assign(acc, flattenMessages(obj[key], prefixedKey));
+    const value = obj[key];
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      Object.assign(acc, flattenMessages(value, prefixedKey));
     } else {
-      acc[prefixedKey] = obj[key];
+      acc[prefixedKey] = String(value);
     }
     return acc;
   }, {});

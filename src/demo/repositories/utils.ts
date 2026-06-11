@@ -1,4 +1,4 @@
-import type { ProjectData, ProjectHealth, RiskLevel } from "@/domain/projects";
+import type { ProjectData, ProjectHealth } from "@/domain/projects";
 
 export function calculateProjectHealth(project: ProjectData): ProjectHealth {
   const negativeReasons: string[] = [];

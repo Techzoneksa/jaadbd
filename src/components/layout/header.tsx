@@ -1,19 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
 import {
   Menu, Search, Bell, Moon, Sun, Globe, User, ChevronDown,
   LogOut, Settings as SettingsIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onMenuToggle: () => void;
 }
 
 export function Header({ onMenuToggle }: HeaderProps) {
-  const [showSearch, setShowSearch] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isDark, setIsDark] = useState(false);

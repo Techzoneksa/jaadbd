@@ -9,7 +9,15 @@ export interface ProjectService {
   createProject(data: Partial<ProjectData>): Promise<ProjectData>;
   updateProject(id: string, data: Partial<ProjectData>): Promise<ProjectData>;
   deleteProject(id: string): Promise<void>;
-  getDashboardStats(): Promise<any>;
+  getDashboardStats(): Promise<{
+    totalProjects: number;
+    activeProjects: number;
+    totalContractValue: number;
+    totalForecastAtCompletion: number;
+    totalExpectedProfit: number;
+    overallProfitMargin: number;
+    projectsByStatus: Record<string, number>;
+  }>;
 }
 
 export interface TaskService {

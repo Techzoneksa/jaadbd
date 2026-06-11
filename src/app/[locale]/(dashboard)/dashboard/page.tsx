@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { KPICard } from "@/components/dashboard/kpi-card";
 import { DemoProjectService, DemoIdentityServiceImpl } from "@/services";
+import type { ProjectSummary } from "@/domain/projects";
 import { DEMO_ACTIVITIES } from "@/demo/data";
 import { useLocale } from "next-intl";
 import { formatCurrency, formatRelativeTime, formatNumber } from "@/lib/formatters";
@@ -24,6 +25,16 @@ import {
   Users,
   CheckCircle2,
 } from "lucide-react";
+
+interface DemoDashboardStats {
+  totalProjects: number;
+  activeProjects: number;
+  totalContractValue: number;
+  totalForecastAtCompletion: number;
+  totalExpectedProfit: number;
+  overallProfitMargin: number;
+  projectsByStatus: Record<string, number>;
+}
 
 const projectService = new DemoProjectService();
 const identityService = new DemoIdentityServiceImpl();
@@ -53,8 +64,8 @@ export default function DashboardPage() {
   const locale = useLocale();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{ nameAr: string } | null>(null);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [projects, setProjects] = useState<ProjectSummary[]>([]);
+  const [stats, setStats] = useState<DemoDashboardStats | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -74,13 +85,13 @@ export default function DashboardPage() {
     load();
   }, []);
 
-  const greenCount = projects.filter((p: any) => p.health === "GREEN").length;
-  const yellowCount = projects.filter((p: any) => p.health === "YELLOW").length;
-  const redCount = projects.filter((p: any) => p.health === "RED").length;
+  const greenCount = projects.filter((p) => p.health === "GREEN").length;
+  const yellowCount = projects.filter((p) => p.health === "YELLOW").length;
+  const redCount = projects.filter((p) => p.health === "RED").length;
   const total = projects.length || 1;
 
   const atRiskProjects = projects.filter(
-    (p: any) => p.health === "RED" || p.status === "DELAYED"
+    (p) => p.health === "RED" || p.status === "DELAYED"
   );
 
   const monthlyRevenue = stats ? Math.round(stats.totalContractValue / 12) : 0;
@@ -203,7 +214,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  {atRiskProjects.map((p: any) => (
+                  {atRiskProjects.map((p) => (
                     <Link key={p.id} href={`/dashboard/projects/${p.id}`}>
                       <div className="flex items-center justify-between p-2 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer">
                         <span className="text-sm font-medium text-[var(--text-primary)]">{p.nameAr}</span>

@@ -40,6 +40,7 @@ export function getInitials(name: string): string {
     .slice(0, 2);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce<T extends (...args: any[]) => any>(
   fn: T,
   delay: number,

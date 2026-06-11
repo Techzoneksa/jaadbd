@@ -6,6 +6,7 @@ import { Card, CardContent, Button, Badge, Input, SkeletonCard } from "@/compone
 import { PageHeader } from "@/components/shared/page-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { StatusBadge } from "@/components/shared/status-badge";
+import type { ProjectSummary } from "@/domain/projects";
 import { DemoProjectService } from "@/services";
 import { useLocale } from "next-intl";
 import { formatCurrency } from "@/lib/formatters";
@@ -28,10 +29,11 @@ const healthColors: Record<string, string> = {
   RED: "bg-[var(--color-danger)]",
 };
 
-const riskBadge: Record<string, string> = {
+const riskBadge: Record<string, "green" | "yellow" | "red"> = {
   LOW: "green",
   MEDIUM: "yellow",
   HIGH: "red",
+  CRITICAL: "red",
 };
 
 const riskLabel: Record<string, string> = {
@@ -50,7 +52,7 @@ const statusLabel: Record<string, string> = {
 
 export default function ProjectsPage() {
   const locale = useLocale();
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -177,7 +179,7 @@ export default function ProjectsPage() {
                       <StatusBadge status={p.health} />
                     </td>
                     <td className="px-4 py-3">
-                      <Badge variant={riskBadge[p.riskLevel] as any}>{riskLabel[p.riskLevel]}</Badge>
+                      <Badge variant={riskBadge[p.riskLevel]}>{riskLabel[p.riskLevel]}</Badge>
                     </td>
                   </tr>
                 ))}

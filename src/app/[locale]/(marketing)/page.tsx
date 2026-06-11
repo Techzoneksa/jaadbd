@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Building2, FileSpreadsheet, MessageSquare, BarChart3, GitBranch, Link2, TrendingUp, Sliders, ChevronDown, CheckCircle, ArrowLeft, Star, Shield, Headphones, Monitor, Database, HardDrive } from "lucide-react";
+import { FileSpreadsheet, MessageSquare, BarChart3, GitBranch, Link2, TrendingUp, Sliders, ChevronDown, CheckCircle, ArrowLeft, Star } from "lucide-react";
 
 const problems = [
   {

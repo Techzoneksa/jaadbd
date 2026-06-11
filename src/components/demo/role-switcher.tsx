@@ -12,7 +12,7 @@ interface RoleSwitcherProps {
   onClose?: () => void;
 }
 
-export function RoleSwitcher({ onClose }: RoleSwitcherProps) {
+export function RoleSwitcher({ onClose: _onClose }: RoleSwitcherProps) {
   const currentRole = identityService.getCurrentRole();
   const [switching, setSwitching] = useState<string | null>(null);
 

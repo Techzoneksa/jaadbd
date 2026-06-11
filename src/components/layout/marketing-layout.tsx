@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Building2, Menu, X } from "lucide-react";
+import { Building2 } from "lucide-react";
 
 interface MarketingLayoutProps {
   children: ReactNode;

@@ -9,7 +9,6 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DEMO_RISKS } from "@/demo/data";
 import type { RiskData } from "@/domain/risks";
-import { useLocale } from "next-intl";
 import { Search, PlusCircle, AlertTriangle } from "lucide-react";
 
 const categoryLabels: Record<string, string> = {
@@ -61,9 +60,6 @@ function getScoreColor(score: number): string {
   if (score <= 16) return "orange";
   return "red";
 }
-
-const probabilityLabels = ["", "نادر (1)", "ممكن (2)", "محتمل (3)", "مرجح (4)", "شبه مؤكد (5)"];
-const impactLabels = ["", "طفيف (1)", "بسيط (2)", "متوسط (3)", "كبير (4)", "كارثي (5)"];
 
 function RiskMatrix({ risks }: { risks: RiskData[] }) {
   const cells: { prob: number; imp: number; count: number }[] = [];
@@ -152,7 +148,6 @@ const categoryFilterOptions = [
 ];
 
 export default function RisksPage() {
-  const locale = useLocale();
   const params = useParams();
   const projectId = params.projectId as string;
   const [loading, setLoading] = useState(true);

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Input } from "@/components/ui";
+import { Card, CardContent, Button, Badge, Input } from "@/components/ui";
 import { PageHeader } from "@/components/shared/page-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Modal } from "@/components/feedback/modal";
 import { useToast } from "@/components/feedback/toast";
-import { UserPlus, Search, Mail, Shield, UserCog } from "lucide-react";
+import { UserPlus, Search, Mail } from "lucide-react";
 
 const users = [
   { name: "مدير النظام", email: "admin@jaadbuild.com", role: "مدير النظام", roleKey: "SUPER_ADMIN", status: "ACTIVE" },

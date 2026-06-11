@@ -7,7 +7,7 @@ import {
   LayoutDashboard, HardHat, Users, FileText, FileSignature,
   Construction, ShoppingCart, Warehouse, Handshake, Receipt,
   Landmark, UserRound, Tractor, Shield, BarChart3, FolderOpen,
-  Settings, ChevronLeft, ChevronRight, Menu, X, Building2,
+  Settings, ChevronLeft, ChevronRight, X, Building2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +38,7 @@ const sidebarItems: SidebarItem[] = [
   { titleKey: "الإعدادات", href: "/dashboard/settings/company", icon: "Settings" },
 ];
 
-const iconMap: Record<string, React.ComponentType<any>> = {
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutDashboard, HardHat, Users, FileText, FileSignature,
   Construction, ShoppingCart, Warehouse, Handshake, Receipt,
   Landmark, UserRound, Tractor, Shield, BarChart3, FolderOpen, Settings,

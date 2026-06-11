@@ -158,7 +158,15 @@ export async function deleteDemoProject(id: string): Promise<void> {
   DEMO_PROJECTS.splice(idx, 1);
 }
 
-export async function getDemoDashboardStats(): Promise<any> {
+export async function getDemoDashboardStats(): Promise<{
+  totalProjects: number;
+  activeProjects: number;
+  totalContractValue: number;
+  totalForecastAtCompletion: number;
+  totalExpectedProfit: number;
+  overallProfitMargin: number;
+  projectsByStatus: Record<string, number>;
+}> {
   const active = DEMO_PROJECTS.filter((p) => p.status === "ACTIVE");
   const totalContractValue = DEMO_PROJECTS.reduce((s, p) => s + p.contractValue, 0);
   const totalForecast = DEMO_PROJECTS.reduce((s, p) => s + p.forecastAtCompletion, 0);

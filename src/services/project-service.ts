@@ -30,7 +30,15 @@ export class DemoProjectService implements ProjectService {
     return deleteDemoProject(id);
   }
 
-  async getDashboardStats(): Promise<any> {
+  async getDashboardStats(): Promise<{
+    totalProjects: number;
+    activeProjects: number;
+    totalContractValue: number;
+    totalForecastAtCompletion: number;
+    totalExpectedProfit: number;
+    overallProfitMargin: number;
+    projectsByStatus: Record<string, number>;
+  }> {
     return getDemoDashboardStats();
   }
 }

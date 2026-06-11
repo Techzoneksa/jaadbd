@@ -184,7 +184,7 @@ export default function DailyReportDetailPage() {
         </Button>
       </Link>
 
-      <div className="print:hidden mb-4 flex items-center gap-2">
+      <div className="print:hidden mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-2">
         {canApprove && (
           <>
             <Button size="sm" onClick={handleApprove}>

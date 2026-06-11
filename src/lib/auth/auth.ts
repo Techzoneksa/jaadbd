@@ -53,10 +53,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user, trigger: _trigger }) {
       if (user) {
         token.id = user.id;
-        token.locale = (user as any).locale || "ar";
+        token.locale = (user as { locale?: string }).locale || "ar";
       }
       return token;
     },

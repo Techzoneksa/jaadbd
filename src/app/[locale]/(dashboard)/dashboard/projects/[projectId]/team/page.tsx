@@ -6,10 +6,7 @@ import { Card, CardContent, Badge, Input, Button, Skeleton } from "@/components/
 import { PageHeader } from "@/components/shared/page-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { EmptyState } from "@/components/shared/empty-state";
-import { ALL_PROJECT_MEMBERS } from "@/demo/data";
-import { DEMO_USERS } from "@/demo/data";
-import { DEMO_TASKS } from "@/demo/data";
-import { useLocale } from "next-intl";
+import { ALL_PROJECT_MEMBERS, DEMO_USERS, DEMO_TASKS } from "@/demo/data";
 import { Search, UserPlus, Users, Mail, Phone } from "lucide-react";
 
 function getInitials(name: string): string {
@@ -55,7 +52,6 @@ const roleLabels: Record<string, string> = {
 };
 
 export default function TeamPage() {
-  const locale = useLocale();
   const params = useParams();
   const projectId = params.projectId as string;
   const [loading, setLoading] = useState(true);

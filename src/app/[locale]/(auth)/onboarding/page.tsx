@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, Check, ArrowLeft, ArrowRight } from "lucide-react";
+import { Building2, Check } from "lucide-react";
 import { Card, Button } from "@/components/ui";
 
 const steps = ["معلومات الشركة", "الوحدات", "أول مشروع", "دعوة الفريق", "اكتمال التهيئة"];

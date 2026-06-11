@@ -1,6 +1,6 @@
 import type { RiskData, RiskFilter } from "@/domain/risks";
 import { DEMO_RISKS } from "@/demo/data";
-import { applySearchFilter, createId, nowISO } from "./utils";
+import { createId, nowISO } from "./utils";
 
 const ORIGINAL_RISKS: RiskData[] = JSON.parse(JSON.stringify(DEMO_RISKS));
 

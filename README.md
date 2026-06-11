@@ -9,8 +9,24 @@
 ## المتطلبات
 
 - Node.js 22.x
-- PostgreSQL 15+
+- PostgreSQL 15+ (مطلوب فقط لـ Production Mode)
 - npm 11+
+
+## وضع العرض التجريبي (Demo Mode)
+
+لا يحتاج Demo Mode إلى PostgreSQL أو أي خدمات خارجية:
+
+```bash
+# شغّل مع Demo Mode (لا يحتاج DATABASE_URL)
+NEXT_PUBLIC_DEMO_MODE=true npm run dev
+```
+
+**المميزات:**
+- يعمل بدون PostgreSQL وبدون `DATABASE_URL`
+- بيانات تجريبية مدمجة (8 مشاريع، 50 مهمة، 40 milestone، 15 تقرير يومي، 31 مخاطرة)
+- مبدّل الأدوار التجريبي (8 أدوار)
+- إعادة تعيين البيانات إلى حالتها الأصلية
+- لا حاجة لتسجيل دخول حقيقي
 
 ## التقنيات
 
@@ -38,7 +54,18 @@ cd jaadbd
 
 # تثبيت الاعتماديات
 npm install
+```
 
+### تشغيل وضع العرض التجريبي (دون PostgreSQL)
+
+```bash
+# لا يحتاج أي متغيرات بيئة أو قاعدة بيانات
+NEXT_PUBLIC_DEMO_MODE=true npm run dev
+```
+
+### تشغيل وضع الإنتاج (مع PostgreSQL)
+
+```bash
 # إعداد متغيرات البيئة
 cp .env.example .env
 # عدّل .env بإعدادات قاعدة البيانات الخاصة بك
@@ -160,18 +187,20 @@ JAAD BUILD يدعم تعدد الشركات (Multi-Tenant):
 كلمة المرور: Demo@123456
 ```
 
-## المراحل القادمة
+## المراحل
 
-| المرحلة | المحتوى |
-|---------|---------|
-| Phase 1 | Core Projects & Tasks |
-| Phase 2 | Tenders & BOQ |
-| Phase 3 | Procurement & Inventory |
-| Phase 4 | Subcontractors & Progress Billing |
-| Phase 5 | Finance & Accounting |
-| Phase 6 | HR & Equipment |
-| Phase 7 | Quality & Safety |
-| Phase 8 | AI & Integrations |
+| المرحلة | المحتوى | الحالة |
+|---------|---------|--------|
+| Phase 0 | SaaS Foundation & Design System | ✅ مكتمل |
+| Phase 1 | Core Projects & Site Operations (Demo) | ✅ مكتمل |
+| Phase 1.1 | Demo QA, Polish & Deployment Verification | ✅ مكتمل |
+| Phase 2 | Demo CRM, Tenders, BOQ & Contracts | 🔲 |
+| Phase 3 | Procurement & Inventory | 🔲 |
+| Phase 4 | Subcontractors & Progress Billing | 🔲 |
+| Phase 5 | Finance & Accounting | 🔲 |
+| Phase 6 | HR & Equipment | 🔲 |
+| Phase 7 | Quality & Safety | 🔲 |
+| Phase 8 | AI & Integrations | 🔲 |
 
 ## الترخيص
 

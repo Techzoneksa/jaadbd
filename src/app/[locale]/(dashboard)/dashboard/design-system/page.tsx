@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { EmptyState } from "@/components/shared/empty-state";
-import { Mail, Search, User, Loader2, FolderOpen, AlertTriangle } from "lucide-react";
+import { Mail, Search, FolderOpen, AlertTriangle } from "lucide-react";
 
 const colorTokens = [
   { name: "Primary 700", var: "--color-primary-700", class: "bg-[var(--color-primary-700)]" },

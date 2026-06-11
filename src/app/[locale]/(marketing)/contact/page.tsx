@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Building2, Send, Phone, Mail, MapPin, CheckCircle, ArrowLeft } from "lucide-react";
+import { Building2, Send, Phone, Mail, MapPin, CheckCircle } from "lucide-react";
 
 const activityOptions = [
   "مقاولات عامة",

@@ -395,7 +395,7 @@ function ProjectCommandCenterContent() {
               <BarChart3 className="h-4 w-4 text-[var(--text-tertiary)]" />
               <span className="text-xs text-[var(--text-secondary)]">المدة</span>
             </div>
-            <p className="text-sm font-medium text-[var(--text-primary)]">{formatDateRange(project.startDate, project.endDate, locale)}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)] truncate">{formatDateRange(project.startDate, project.endDate, locale)}</p>
           </CardContent>
         </Card>
       </div>

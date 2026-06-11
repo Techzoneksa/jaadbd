@@ -3,11 +3,9 @@
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge } from "@/components/ui";
 import { PageHeader } from "@/components/shared/page-header";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
-import { useToast } from "@/components/feedback/toast";
 import { Crown, Users, Projector, Database, Calendar, ArrowUp } from "lucide-react";
 
 export default function SubscriptionPage() {
-  const { addToast } = useToast();
 
   const usage = [
     { label: "المستخدمون", current: 7, max: 20, icon: Users },

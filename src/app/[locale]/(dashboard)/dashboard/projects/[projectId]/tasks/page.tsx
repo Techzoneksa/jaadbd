@@ -12,11 +12,11 @@ import { DEMO_TASKS } from "@/demo/data";
 import { Search, X, User, Calendar, CheckSquare, Tag, AlertTriangle } from "lucide-react";
 import type { TaskData, TaskStatus, TaskPriority } from "@/domain/tasks";
 
-const PRIORITY_COLORS: Record<TaskPriority, string> = {
-  LOW: "gray",
-  MEDIUM: "blue",
-  HIGH: "orange",
-  URGENT: "red",
+const PRIORITY_COLORS = {
+  LOW: "gray" as const,
+  MEDIUM: "blue" as const,
+  HIGH: "orange" as const,
+  URGENT: "red" as const,
 };
 
 const PRIORITY_LABELS: Record<TaskPriority, string> = {
@@ -47,7 +47,7 @@ function statusGroup(s: string): TaskStatus {
 
 function PriorityBadge({ priority }: { priority: TaskPriority }) {
   return (
-    <Badge variant={PRIORITY_COLORS[priority] as any}>
+    <Badge variant={PRIORITY_COLORS[priority]}>
       {PRIORITY_LABELS[priority]}
     </Badge>
   );
@@ -214,7 +214,6 @@ function TaskDetailPanel({ task, onClose }: { task: TaskData; onClose: () => voi
 }
 
 export default function TasksPage() {
-  const locale = useLocale();
   const params = useParams();
   const projectId = params.projectId as string;
 
